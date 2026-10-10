@@ -1,5 +1,15 @@
 # 60 fps at 1x on the Snapdragon 8 Elite
 
+## What the measured drop means
+
+The 20-minute reference-device run records about 20 ms GPU time for the race
+before heating and about 35.6 ms once warm. A frame that needs 35.6 ms of GPU
+time cannot sustain 60 fps (16.7 ms budget); the GPU-only ceiling is about
+28 fps (1000 / 35.6), which explains the observed 26–28 fps instead of 60.
+That is thermal throttling increasing frame cost, not an intentional half-rate
+setting. Reducing MSAA lowers cold GPU work, but no software option can
+guarantee a fixed sustained frame rate on a thermally constrained phone.
+
 Goal: the race at 1x (1280x720 internal, MSAA off) at a sustained 60 fps on
 the reference tablet (nubia NP05J, Snapdragon 8 Elite, Adreno 830, Qualcomm
 driver), including after twenty minutes of play. 4x MSAA at 60 is out of
