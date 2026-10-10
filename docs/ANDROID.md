@@ -99,12 +99,12 @@ the fullscreen view by Android; this changes the presentation buffer size,
 not FH1's internal render scale. That resolution applies when the game starts.
 
 The internal render scale intentionally remains at the engine's supported
-native 1× default for now. Fractional 0.25×–0.75× scales are not implemented
-by the current texture cache/native executor (which uses integer scale factors
-and scaled resolve buffers), so exposing them as selectable settings would
-pretend a feature exists when it does not. The optional 2× path can allocate a
-dedicated resolve buffer of about 2 GB; it is not enabled by this launcher for
-memory safety.
+native 1× default for now. Fractional 0.25×–0.75× and 1.25×–1.75× scales are
+not implemented by the current texture cache/native executor, which uses
+integer scale factors. Exposing them as selectable settings would pretend a
+feature exists when it does not. The optional 2× path can allocate a dedicated
+resolve buffer of about 2 GB; it is not enabled by this launcher for memory
+safety.
 
 ## Controls
 
