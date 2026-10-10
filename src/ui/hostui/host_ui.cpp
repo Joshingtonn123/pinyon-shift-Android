@@ -646,6 +646,27 @@ bool HostUi::HasHud() const {
          (overlay_source_ && !overlay_source_().empty());
 }
 
+namespace {
+uint32_t TouchControlColor(std::string_view label, bool pressed) {
+  // Xbox face-button colours and distinct trigger/shoulder colours help make
+  // the touch pad readable over bright scenery without hiding the road.
+  if (label == "A") return pressed ? Rgba(75, 255, 158, 220) : Rgba(20, 150, 85, 155);
+  if (label == "B") return pressed ? Rgba(255, 110, 120, 220) : Rgba(178, 34, 50, 155);
+  if (label == "X") return pressed ? Rgba(100, 180, 255, 220) : Rgba(35, 95, 180, 155);
+  if (label == "Y") return pressed ? Rgba(255, 230, 105, 225) : Rgba(160, 125, 25, 165);
+  if (label == "RT") return pressed ? Rgba(110, 220, 255, 225) : Rgba(18, 110, 165, 170);
+  if (label == "LT") return pressed ? Rgba(255, 190, 100, 225) : Rgba(170, 85, 18, 165);
+  if (label == "LB" || label == "RB") {
+    return pressed ? Rgba(215, 145, 255, 225) : Rgba(105, 45, 145, 165);
+  }
+  if (label == "BACK" || label == "START") {
+    return pressed ? Rgba(230, 240, 255, 225) : Rgba(60, 80, 105, 170);
+  }
+  // The unlabeled steering base and thumb are cyan/teal.
+  return pressed ? Rgba(115, 255, 235, 225) : Rgba(15, 110, 115, 165);
+}
+}  // namespace
+
 void HostUi::DrawOverlay(rex::ui::UIDrawContext& context) {
   if (!overlay_source_) return;
   const auto discs = overlay_source_();
@@ -653,13 +674,16 @@ void HostUi::DrawOverlay(rex::ui::UIDrawContext& context) {
   drawer_.Begin(context, float(context.render_target_width()),
                 float(context.render_target_height()));
   for (const auto& disc : discs) {
-    DrawDisc(disc.x, disc.y, disc.radius, disc.pressed ? Rgba(255, 255, 255, 120)
-                                                       : Rgba(255, 255, 255, 45));
+    // A dark rim and translucent button-specific fill remain visible against
+    // sky, grass and road; pressing a control brightens its own colour.
+    DrawDisc(disc.x, disc.y, disc.radius, Rgba(0, 0, 0, 150));
+    DrawDisc(disc.x, disc.y, disc.radius * 0.87f,
+             TouchControlColor(disc.label, disc.pressed));
     if (!disc.label.empty()) {
       // Labels in title units: the canvas maps them back to these pixels.
       const float size = std::max(14.0f, disc.radius / canvas_.scale * 0.55f);
       DrawText(Face::kLabel, size, disc.label, (disc.x - canvas_.x) / canvas_.scale,
-               (disc.y - canvas_.y) / canvas_.scale + size * 0.35f, Rgba(255, 255, 255, 210),
+               (disc.y - canvas_.y) / canvas_.scale + size * 0.35f, Rgba(255, 255, 255, 235),
                0.5f);
     }
   }
