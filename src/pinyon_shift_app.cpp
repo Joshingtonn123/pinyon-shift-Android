@@ -53,7 +53,7 @@ REXCVAR_DEFINE_BOOL(pinyon_shift_touch_controls, REX_PLATFORM_ANDROID, "Pinyon S
                     "On-screen controls for touch screens: a steering stick, throttle, brake "
                     "and buttons, shown on a touch and hidden after a while without one")
     .lifecycle(rex::cvar::Lifecycle::kRequiresRestart);
-REXCVAR_DEFINE_UINT32(pinyon_shift_config_schema, 27, "Pinyon Shift",
+REXCVAR_DEFINE_UINT32(pinyon_shift_config_schema, 28, "Pinyon Shift",
                       "Pinyon Shift host configuration schema version");
 REXCVAR_DEFINE_STRING(enabled_mods, "", "Mods",
                       "Mods to load from <state>/mods, in order, separated by commas. With any "
@@ -102,7 +102,7 @@ namespace {
 // at 120 fps there against about 55 on Direct3D 12 (docs/PERFORMANCE_BACKLOG.md).
 // Migration moves every earlier configuration to it once; the GRAPHICS page's
 // GRAPHICS API row switches back.
-constexpr uint32_t kConfigSchema = 27;
+constexpr uint32_t kConfigSchema = 28;
 
 bool EnsureSupportedConfig(const std::filesystem::path& path, bool& created,
                            bool& migrated) {
@@ -133,7 +133,13 @@ bool EnsureSupportedConfig(const std::filesystem::path& path, bool& created,
               "xma_relaxed_padding_admission = false\n"
               "pinyon_shift_stabilize_vehicle_presentation = false\n"
               "pinyon_shift_skip_opening_movies = false\n"
+#if defined(__ANDROID__)
+              "pinyon_shift_fh1_render_fps_limit = 30\n"
+              "fh1_msaa_single_sample = true\n"
+#else
               "pinyon_shift_fh1_render_fps_limit = 0\n"
+              "fh1_msaa_single_sample = false\n"
+#endif
               "pinyon_shift_fh1_source_presentation = true\n"
               "anisotropic_override = 3\n"
               "swap_post_effect = \"none\"\n"
@@ -345,8 +351,13 @@ bool EnsureSupportedConfig(const std::filesystem::path& path, bool& created,
         {"host_present_fps_limit", "host_present_fps_limit = 0\n"},
         {"host_present_sleep_spin", "host_present_sleep_spin = true\n"},
         {"clear_memory_page_state", "clear_memory_page_state = false\n"},
-        {"pinyon_shift_fh1_render_fps_limit",
-         "pinyon_shift_fh1_render_fps_limit = 0\n"},
+#if defined(__ANDROID__)
+        {"pinyon_shift_fh1_render_fps_limit", "pinyon_shift_fh1_render_fps_limit = 30\n"},
+        {"fh1_msaa_single_sample", "fh1_msaa_single_sample = true\n"},
+#else
+        {"pinyon_shift_fh1_render_fps_limit", "pinyon_shift_fh1_render_fps_limit = 0\n"},
+        {"fh1_msaa_single_sample", "fh1_msaa_single_sample = false\n"},
+#endif
         {"pinyon_shift_fh1_source_presentation",
          "pinyon_shift_fh1_source_presentation = true\n"},
     };
