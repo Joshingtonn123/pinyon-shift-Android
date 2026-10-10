@@ -15,6 +15,16 @@ marked **guess** and have a row that verifies them before anything depends on
 them. Raw notes are kept locally under `.local/backlog-research/` and are not
 distributed.
 
+## Compatibility floor update (2026-10-10)
+
+The line below records the original Android 13 / Vulkan 1.3 performance target
+chosen on 2026-10-01. The declared install floor has since been broadened to
+Android 10 (API 29) and Vulkan 1.1, but this does **not** mark older GPU drivers
+as supported. Dynamic rendering remains a hard requirement of the current
+native executor, and Mali/PowerVR BC texture conversion remains open under
+AP-8.3. The Snapdragon/Adreno device remains the performance reference; Mali
+G90T still requires testing on a real phone.
+
 ## Progress (2026-10-01)
 
 Execution started on 2026-10-01 with the target narrowed to high-end Android
