@@ -51,6 +51,7 @@ class AndroidPortTest(unittest.TestCase):
                        for path in (ROOT / "android").rglob("*") if path.is_file())
         self.assertEqual(files, ["AndroidManifest.xml",
                                  "java/com/pinyonshift/fh1/PinyonShiftActivity.java",
+                                 "java/com/pinyonshift/fh1/PinyonShiftLauncherActivity.java",
                                  "res/xml/game_mode_config.xml"])
         for path in (ROOT / "android").rglob("*"):
             if path.is_file():
@@ -65,6 +66,8 @@ class AndroidPortTest(unittest.TestCase):
                                        "android.permission.VIBRATE"])
         self.assertIn('android:extractNativeLibs="true"', manifest)
         self.assertIn("android.hardware.vulkan.version", manifest)
+        self.assertIn('android:version="0x401000"', manifest)
+        self.assertIn("PinyonShiftLauncherActivity", manifest)
         self.assertIn(pinyon_android.ACTIVITY, manifest)
 
     def test_activity_loads_the_runtime_before_the_game(self):
@@ -89,11 +92,23 @@ class AndroidPortTest(unittest.TestCase):
         self.assertEqual(variables["ANDROID_ABI"], pinyon_android.CONFIG["abi"])
         self.assertEqual(variables["ANDROID_PLATFORM"],
                          f"android-{pinyon_android.CONFIG['min_sdk']}")
+        self.assertEqual(pinyon_android.CONFIG["min_sdk"], 29)
         # One C++ runtime shared by the game, the runtime and the plugin.
         self.assertEqual(variables["ANDROID_STL"], "c++_shared")
         # Android 15's 16 KiB-page kernels need 16 KiB-aligned segments.
         self.assertIn("max-page-size=16384", variables["CMAKE_SHARED_LINKER_FLAGS"])
         self.assertNotIn("-msse", json.dumps(base))
+
+    def test_launcher_output_resolution_is_persisted_and_applied_to_surface(self):
+        launcher = (ROOT / "android" / "java" / "com" / "pinyonshift" / "fh1"
+                    / "PinyonShiftLauncherActivity.java").read_text(encoding="utf-8")
+        game = (ROOT / "android" / "java" / "com" / "pinyonshift" / "fh1"
+                / "PinyonShiftActivity.java").read_text(encoding="utf-8")
+        for size in ("800x600", "720x480", "1280x720", "1280x1024"):
+            self.assertIn(size, launcher)
+        self.assertIn('putInt("output_width"', launcher)
+        self.assertIn('putInt("output_height"', launcher)
+        self.assertIn("setFixedSize(width, height)", game)
 
     def test_pushed_files_are_opened_to_the_app(self):
         # On Android 15 the app cannot list what adb pushed into its own
