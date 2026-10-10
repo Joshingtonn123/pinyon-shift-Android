@@ -383,7 +383,7 @@ std::unique_ptr<MenuScreen> SettingsPages::Graphics() {
                             {"draw_resolution_scale_y", "1"},
                             {"present_effect", "\"bilinear\""},
                             {"anisotropic_override", "-1"},
-                            {"fh1_msaa_single_sample", "false"},
+                            {"fh1_msaa_single_sample", "true"},
                             {"pinyon_shift_fh1_render_fps_limit", "30"}}},
                           {"SMOOTH 60",
                            {{"gpu_backend", "\"vulkan\""},
