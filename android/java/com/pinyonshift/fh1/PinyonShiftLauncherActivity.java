@@ -74,6 +74,14 @@ public final class PinyonShiftLauncherActivity extends Activity {
         outputCard.addView(outputHint, matchWrap());
 
         Spinner outputSpinner = new Spinner(this);
+        GradientDrawable spinnerBackground = new GradientDrawable();
+        spinnerBackground.setColor(0xFF18243A);
+        spinnerBackground.setCornerRadius(dp(10));
+        spinnerBackground.setStroke(dp(1), 0xFF354562);
+        outputSpinner.setBackground(spinnerBackground);
+        GradientDrawable dropdownBackground = new GradientDrawable();
+        dropdownBackground.setColor(0xFF18243A);
+        outputSpinner.setPopupBackgroundDrawable(dropdownBackground);
         outputSpinner.setAdapter(new OutputAdapter(this));
         outputSpinner.setSelection(selectedOutputIndex());
         outputCard.addView(outputSpinner, matchWrap());
