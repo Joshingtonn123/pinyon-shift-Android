@@ -8,10 +8,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto">
 
-    <!-- The renderer is Vulkan only; 1.3-class drivers are the floor. -->
+    <!-- Vulkan 1.1 is the install floor; required renderer features are checked at runtime. -->
     <uses-feature
         android:name="android.hardware.vulkan.version"
-        android:version="0x403000"
+        android:version="0x401000"
         android:required="true" />
 
     <uses-feature
@@ -60,6 +60,17 @@
             android:resource="@xml/game_mode_config" />
 
         <activity
+            android:name="com.pinyonshift.fh1.PinyonShiftLauncherActivity"
+            android:label="Pinyon Shift"
+            android:theme="@android:style/Theme.Material.NoActionBar"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name="com.pinyonshift.fh1.PinyonShiftActivity"
             android:label="Pinyon Shift"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
@@ -70,10 +81,6 @@
             android:configChanges="layoutDirection|locale|grammaticalGender|fontScale|fontWeightAdjustment|orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:preferMinimalPostProcessing="true"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
