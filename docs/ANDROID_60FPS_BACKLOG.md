@@ -10,6 +10,11 @@ That is thermal throttling increasing frame cost, not an intentional half-rate
 setting. Reducing MSAA lowers cold GPU work, but no software option can
 guarantee a fixed sustained frame rate on a thermally constrained phone.
 
+**Current Android default (2026-10-10):** new installs and migrated configs
+now use a 30 fps cap and single-sampled guest surfaces (MSAA off) by default.
+The benchmark rows below describe the earlier measured settings and have not
+yet been re-run with the new default on the reference hardware.
+
 Goal: the race at 1x (1280x720 internal, MSAA off) at a sustained 60 fps on
 the reference tablet (nubia NP05J, Snapdragon 8 Elite, Adreno 830, Qualcomm
 driver), including after twenty minutes of play. 4x MSAA at 60 is out of
