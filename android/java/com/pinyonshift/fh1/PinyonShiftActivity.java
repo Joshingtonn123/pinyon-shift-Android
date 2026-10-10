@@ -131,8 +131,7 @@ public class PinyonShiftActivity extends SDLActivity {
         surface.post(() -> {
             if (surface instanceof android.view.SurfaceView) {
                 ((android.view.SurfaceView) surface).getHolder().setFixedSize(width, height);
-                Log.i(TAG, "Output surface size set to " + width + "x" + height
-                        + ", viewport " + viewportWidth + "x" + viewportHeight);
+                Log.i(TAG, "Output surface size set to " + width + "x" + height);
             }
         });
     }
