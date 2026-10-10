@@ -662,7 +662,7 @@ bool PinyonShiftApp::EnsureHostUi() {
       for (const auto& shape : pad.Shapes(float(window()->GetActualPhysicalWidth()),
                                           float(window()->GetActualPhysicalHeight()))) {
         discs.push_back({shape.x, shape.y, shape.radius, shape.stick ? "" : shape.label,
-                         shape.pressed && !shape.stick});
+                         shape.pressed});
         if (shape.stick) {
           discs.push_back({shape.stick_x, shape.stick_y, shape.radius * 0.45f, "",
                            shape.pressed});
