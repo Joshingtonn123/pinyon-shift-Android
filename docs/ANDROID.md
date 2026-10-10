@@ -31,13 +31,18 @@ refuses Android packages, libraries and signing keys (see
   1.1**, rather than refusing everything below Android 13/Vulkan 1.3. This is
   a broader *install floor*, not a guarantee that every Vulkan 1.1 phone can
   render FH1: the native executor still needs dynamic rendering, supplied by
-  Vulkan 1.3 core or `VK_KHR_dynamic_rendering`, plus the title's required
-  formats/features.
-- **Mali G90T is not verified yet.** An Android 10/Vulkan 1.1 label does not
-  establish the exact driver extensions or render-target support needed here.
-  It must pass the startup capability report and gameplay/race tests on actual
-  hardware before being called supported. A missing Vulkan feature must be
-  fixed in the renderer; it cannot be solved by changing the manifest alone.
+  Vulkan 1.3 core or `VK_KHR_dynamic_rendering`. On Vulkan 1.1, that extension
+  also has dependencies such as `VK_KHR_depth_stencil_resolve`. The current
+  native executor rejects devices without dynamic rendering; it has no
+  classic-render-pass fallback yet.
+- **Mali G90T is not verified yet.** MediaTek identifies the G90-series GPU as
+  Mali-G76 MC4, but the exact phone driver must still expose the renderer's
+  required extensions, formats and features. In addition, the Android backlog
+  still has BC texture decoding/transcoding for Mali/PowerVR open; an
+  uncompressed fallback can substantially increase texture memory and churn.
+  G90T must pass the startup capability report plus title-screen, free-roam
+  and race tests on actual hardware before being called supported. Changing
+  the manifest alone cannot supply missing renderer functionality.
 - Start testing with **6 GB RAM or more** and enough free storage for the game
   data. A 4 GB phone may install but is not a supported performance target
   and may run into shared-memory pressure; no RAM amount guarantees
