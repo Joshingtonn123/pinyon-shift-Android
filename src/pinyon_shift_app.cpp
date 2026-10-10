@@ -189,6 +189,17 @@ bool EnsureSupportedConfig(const std::filesystem::path& path, bool& created,
     migrated_text.replace(static_cast<size_t>(match.position(1)),
                           static_cast<size_t>(match.length(1)),
                           std::to_string(kConfigSchema));
+#if defined(__ANDROID__)
+    // Schema 28 moves Android's default from display-following to a 30 FPS
+    // thermal-friendly cap. Only this migration changes a previous zero;
+    // users can still select OFF / display-following in SETTINGS afterward.
+    if (schema < 28) {
+      const std::regex old_mobile_default(
+          R"re((pinyon_shift_fh1_render_fps_limit\s*=\s*)0(\s*(?:#.*)?(?:\r?\n|$))re",
+          std::regex::icase);
+      migrated_text = std::regex_replace(migrated_text, old_mobile_default, "$1 30$2");
+    }
+#endif
     const std::regex rejected_interpolation_pattern(
         R"((?:^|\n)\s*pinyon_shift_fh1_frame_interpolation\s*=\s*(?:true|false)\s*(?:#.*)?(?:\r?\n|$))",
         std::regex::icase);
