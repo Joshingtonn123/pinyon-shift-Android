@@ -367,14 +367,12 @@ std::unique_ptr<MenuScreen> SettingsPages::Graphics() {
   // busiest part runs at a 12.7 ms median (79 fps), so it holds 60. At 3x
   // Vulkan is GPU-bound at about 29 ms, where Direct3D 12 takes 17.5 ms.
 #if defined(__ANDROID__)
-  // AP-7.5: a handheld renders at 1x (AP-2.5) and trades frame rate for
-  // battery and heat. BATTERY 30 is the Xbox 360's own rate (the guest
-  // vblank at 60 Hz) with the game's 4x MSAA; SMOOTH 60 doubles it and
-  // renders without MSAA: on a Snapdragon 8 Elite the race's busiest part
-  // takes 25 ms with MSAA and holds 60 fps cold without it. Both scale to the
-  // panel bilinearly and keep the game's own anisotropic filtering: FSR 1 at
-  // the panel's 2400x1504 cost 1.4 ms a frame and forced 4x anisotropy
-  // 0.4 ms, measured by alternating each in one run.
+  // AP-7.5: a handheld renders at 1x and trades image quality for battery
+  // and heat. Both Android presets now use single-sampled guest surfaces
+  // (MSAA off) and bilinear presentation; BATTERY 30 caps at 30 fps, while
+  // SMOOTH 60 targets 60. On the reference Snapdragon 8 Elite, the busiest
+  // race section took about 25 ms with guest MSAA and about 17 ms without it
+  // when cold. The 30 fps profile gives the GPU more thermal headroom.
   rows.push_back(Setting("GRAPHICS PRESET",
                          {{"BATTERY 30",
                            {{"gpu_backend", "\"vulkan\""},
