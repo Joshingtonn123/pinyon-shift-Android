@@ -18,7 +18,7 @@ from your PC to your device over USB. Nothing is uploaded. The repository
 refuses Android packages, libraries and signing keys (see
 [legal](LEGAL.md)).
 
-## Requirements
+## Requirements and compatibility
 
 - A Windows PC where the game is already built (the launcher, or
   `tools/build-preview.ps1`): the Android build reuses the code translated
@@ -27,8 +27,23 @@ refuses Android packages, libraries and signing keys (see
   17. `pinyon.py android doctor --install` adds the pinned NDK, build tools
   and platform from `config/android-toolchain.json`, and shows the Android
   SDK license for you to accept (`--accept-licenses` answers yes).
-- The device: arm64, Android 13 (API 33) or later, a Vulkan 1.3 driver,
-  about 8 GB free, USB debugging turned on.
+- The declared install floor is now **Android 10 (API 29), arm64 and Vulkan
+  1.1**, rather than refusing everything below Android 13/Vulkan 1.3. This is
+  a broader *install floor*, not a guarantee that every Vulkan 1.1 phone can
+  render FH1: the native executor still needs dynamic rendering, supplied by
+  Vulkan 1.3 core or `VK_KHR_dynamic_rendering`, plus the title's required
+  formats/features.
+- **Mali G90T is not verified yet.** An Android 10/Vulkan 1.1 label does not
+  establish the exact driver extensions or render-target support needed here.
+  It must pass the startup capability report and gameplay/race tests on actual
+  hardware before being called supported. A missing Vulkan feature must be
+  fixed in the renderer; it cannot be solved by changing the manifest alone.
+- Start testing with **6 GB RAM or more** and enough free storage for the game
+  data. A 4 GB phone may install but is not a supported performance target
+  and may run into shared-memory pressure; no RAM amount guarantees
+  compatibility or stable FPS.
+- USB debugging turned on for installation/testing, and around 8 GB free
+  storage for the Android package, game files, shader caches and saves.
 
 ## From the PC to the device
 
@@ -75,6 +90,21 @@ python tools/pinyon.py android run
 `run --null-gpu` starts it without a renderer, and `run --route FILE` runs a
 render-test route (`config/render-tests/`). `pull-logs` copies the logs,
 crash reports and route output to `.local/android/device-logs/`.
+
+## Launcher settings
+
+The Android launcher has an output-surface resolution selector for 800×600,
+720×480, 1280×720 and 1280×1024. The selected fixed-size surface is scaled to
+the fullscreen view by Android; this changes the presentation buffer size,
+not FH1's internal render scale. That resolution applies when the game starts.
+
+The internal render scale intentionally remains at the engine's supported
+native 1× default for now. Fractional 0.25×–0.75× scales are not implemented
+by the current texture cache/native executor (which uses integer scale factors
+and scaled resolve buffers), so exposing them as selectable settings would
+pretend a feature exists when it does not. The optional 2× path can allocate a
+dedicated resolve buffer of about 2 GB; it is not enabled by this launcher for
+memory safety.
 
 ## Controls
 
