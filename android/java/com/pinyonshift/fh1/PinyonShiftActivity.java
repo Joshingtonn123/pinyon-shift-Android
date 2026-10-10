@@ -106,10 +106,33 @@ public class PinyonShiftActivity extends SDLActivity {
             Log.w(TAG, "SDL surface is not ready; keeping the default output size");
             return;
         }
+
+        // Keep the selected output aspect ratio. The SurfaceView buffer and
+        // its viewport use the same ratio, with black letterboxing rather
+        // than stretching 4:3/5:4 selections across a wide phone display.
+        android.util.DisplayMetrics display = new android.util.DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(display);
+        final int screenWidth = Math.max(1, display.widthPixels);
+        final int screenHeight = Math.max(1, display.heightPixels);
+        final float selectedAspect = (float) width / (float) height;
+        int viewportWidth = screenWidth;
+        int viewportHeight = screenHeight;
+        if ((float) screenWidth / (float) screenHeight > selectedAspect) {
+            viewportWidth = Math.max(1, Math.round(screenHeight * selectedAspect));
+        } else {
+            viewportHeight = Math.max(1, Math.round(screenWidth / selectedAspect));
+        }
+        android.widget.RelativeLayout.LayoutParams params =
+                new android.widget.RelativeLayout.LayoutParams(viewportWidth, viewportHeight);
+        params.addRule(android.widget.RelativeLayout.CENTER_IN_PARENT);
+        surface.setLayoutParams(params);
+        getWindow().getDecorView().setBackgroundColor(android.graphics.Color.BLACK);
+
         surface.post(() -> {
             if (surface instanceof android.view.SurfaceView) {
                 ((android.view.SurfaceView) surface).getHolder().setFixedSize(width, height);
-                Log.i(TAG, "Output surface size set to " + width + "x" + height);
+                Log.i(TAG, "Output surface size set to " + width + "x" + height
+                        + ", viewport " + viewportWidth + "x" + viewportHeight);
             }
         });
     }
