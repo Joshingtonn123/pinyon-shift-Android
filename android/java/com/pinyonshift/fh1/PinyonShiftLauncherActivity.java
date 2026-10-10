@@ -110,10 +110,10 @@ public final class PinyonShiftLauncherActivity extends Activity {
         internalValue.setPadding(0, dp(10), 0, dp(5));
         internalCard.addView(internalValue, matchWrap());
         TextView internalHint = text(
-                "Fractional 0.25x–0.75x options need renderer-level changes: the current texture "
-                        + "cache uses integer render scales and clamps Android to 1x. The 2x path "
-                        + "can allocate a dedicated resolve buffer around 2 GB, so unsupported "
-                        + "scales are not exposed as if they worked.",
+                "Fractional 0.25x–0.75x and 1.25x–1.75x options need renderer-level changes: "
+                        + "the current texture cache uses integer render scales and clamps Android "
+                        + "to 1x. The 2x path can allocate a dedicated resolve buffer around 2 GB, "
+                        + "so unsupported scales are not exposed as if they worked.",
                 13, 0xFFB9C4D8, false);
         internalHint.setLineSpacing(dp(2), 1.0f);
         internalHint.setPadding(0, dp(3), 0, 0);
