@@ -75,6 +75,7 @@ public class PinyonShiftActivity extends SDLActivity {
             }
         }
         super.onCreate(savedInstanceState);
+        applyConfiguredOutputResolution();
         // A race played on a controller touches nothing, and a screen that
         // times out sends the game to the background, where it pauses (a
         // scripted route stalls the same way). Only while this window shows.
@@ -86,6 +87,31 @@ public class PinyonShiftActivity extends SDLActivity {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
         }
+    }
+
+    // Apply the selected native surface buffer size. Android scales this
+    // buffer to the full-screen SurfaceView. This changes presentation-buffer
+    // size, not FH1's separate internal render scale.
+    private void applyConfiguredOutputResolution() {
+        final android.content.SharedPreferences settings =
+                getSharedPreferences(PinyonShiftLauncherActivity.PREFERENCES, MODE_PRIVATE);
+        final int width = settings.getInt("output_width", 1280);
+        final int height = settings.getInt("output_height", 720);
+        if (!PinyonShiftLauncherActivity.isSupportedOutputResolution(width, height)) {
+            Log.w(TAG, "Ignoring unsupported output resolution " + width + "x" + height);
+            return;
+        }
+        final android.view.View surface = mSurface;
+        if (surface == null) {
+            Log.w(TAG, "SDL surface is not ready; keeping the default output size");
+            return;
+        }
+        surface.post(() -> {
+            if (surface instanceof android.view.SurfaceView) {
+                ((android.view.SurfaceView) surface).getHolder().setFixedSize(width, height);
+                Log.i(TAG, "Output surface size set to " + width + "x" + height);
+            }
+        });
     }
 
     // The C++ runtime first, then the ReXGlue runtime, which holds SDL and
